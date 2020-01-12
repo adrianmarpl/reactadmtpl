@@ -1,20 +1,24 @@
 import React, { useReducer, useEffect } from 'react';
-import axios from 'axios';
 import peopleReducer from '../reducers/PeopleReducer';
+import API from '../api';
+
+const PeopleRender = (peoples, dispatch) => {
+    console.log('render peoples', peoples);
+    if (peoples.length === 0) {
+        API.get('/people')
+            .then(res => {
+                const response = res.data;
+                dispatch({ type: 'SET', peoples: response.results });
+            });
+    }
+}
 
 const PeopleList = () => {
     const [peoples, dispatch] = useReducer(peopleReducer, []);
 
     useEffect(() => {
-        console.log('render peoples', peoples);
-        if (peoples.length === 0) {
-            axios.get('https://swapi.co/api/people/')
-                .then(res => {
-                    const response = res.data;
-                    dispatch({ type: 'SET', peoples: response.results });
-                });
-        }
-    }, [peoples]);
+        PeopleRender(peoples, dispatch);
+    });
 
     return (
         <div>
